@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import telran.java51.book.dao.AuthorRepository;
 import telran.java51.book.dao.BookRepository;
 import telran.java51.book.dao.PublisherRepository;
+import telran.java51.book.dto.AuthorDto;
 import telran.java51.book.dto.BookDto;
 import telran.java51.book.dto.exceptions.EntityNotFoundException;
 import telran.java51.book.model.Author;
@@ -49,6 +50,46 @@ public class BookServiceImpl implements BookService {
 	public BookDto findBookByIsbn(String isbn) {
 		Book book = bookRepository.findById(isbn).orElseThrow(EntityNotFoundException::new);
 		return modelMapper.map(book, BookDto.class);
+	}
+	
+	@Override
+	@Transactional
+	public BookDto remove(String isbn) {
+		Book book = bookRepository.findById(isbn).orElseThrow(EntityNotFoundException::new);
+		bookRepository.deleteById(isbn);
+		return modelMapper.map(book, BookDto.class);
+	}
+
+	@Override
+	@Transactional
+	public BookDto updateBook(String isbn, String title) {
+		Book book = bookRepository.findById(isbn).orElseThrow(EntityNotFoundException::new);
+		book.setTitle(title);
+		return modelMapper.map(book, BookDto.class);
+	}
+
+	@Override
+	@Transactional(readOnly = true)
+	public Iterable<BookDto> findBooksByAuthor(String authorName) {
+		return bookRepository.findByAuthorsName(authorName)
+				.map(b -> modelMapper.map(b, BookDto.class))
+				.collect(Collectors.toList());
+	}
+
+	@Override
+	@Transactional(readOnly = true)
+	public Iterable<BookDto> findBooksByPublisher(String publisherName) {
+		return bookRepository.findByPublisherPublisherName(publisherName)
+				.map(b -> modelMapper.map(b, BookDto.class))
+				.collect(Collectors.toList());
+	}
+
+	@Override
+	public Iterable<AuthorDto> findBookAuthors(String isbn) {
+		Book book = bookRepository.findById(isbn).orElseThrow(EntityNotFoundException::new);
+		return book.getAuthors().stream()
+				.map(a -> modelMapper.map(a, AuthorDto.class))
+				.collect(Collectors.toList());
 	}
 
 }
