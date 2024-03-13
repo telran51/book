@@ -52,5 +52,15 @@ public class BookController {
 	public Iterable<AuthorDto> findBookAuthors(@PathVariable String isbn) {
 		return bookService.findBookAuthors(isbn);
 	}
+	
+	@GetMapping("/publishers/author/{authorName}")
+	Iterable<String> findPublishersByAuthor(@PathVariable String authorName){
+		return bookService.findPublishersByAuthor(authorName);
+	}
+	
+	@DeleteMapping("/author/{authorName}")
+	AuthorDto removeAuthor(@PathVariable String authorName) {
+		return bookService.removeAuthor(authorName);
+	}
 
 }

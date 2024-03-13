@@ -92,4 +92,18 @@ public class BookServiceImpl implements BookService {
 				.collect(Collectors.toList());
 	}
 
+	@Override
+	public Iterable<String> findPublishersByAuthor(String authorName) {
+		return publisherRepository.findByPublishersAuthor(authorName);
+	}
+
+	@Override
+	@Transactional
+	public AuthorDto removeAuthor(String authorName) {
+		Author author = authorRepository.findById(authorName).orElseThrow(EntityNotFoundException::new);
+		bookRepository.deleteByAuthorsName(authorName);
+		authorRepository.deleteById(authorName);
+		return modelMapper.map(author, AuthorDto.class);
+	}
+
 }
