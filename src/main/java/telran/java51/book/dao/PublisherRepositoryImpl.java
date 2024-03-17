@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.TypedQuery;
 import telran.java51.book.model.Publisher;
 
 @Repository
@@ -19,14 +20,16 @@ public class PublisherRepositoryImpl implements PublisherRepository {
 
 	@Override
 	public List<String> findByPublishersAuthor(String authorName) {
-		// TODO Auto-generated method stub
-		return null;
+		TypedQuery<String> query = em.createQuery("select distinct b.publisher.publisherName from Book b join b.authors a where a.name=?1", String.class);
+		query.setParameter(1, authorName);
+		return query.getResultList();
 	}
 
 	@Override
 	public Stream<Publisher> findDistinctByBooksAuthorsName(String authorName) {
-		// TODO Auto-generated method stub
-		return null;
+		TypedQuery<Publisher> query = em.createQuery("select distinct p from Book b join b.authors a join b.publisher p where a.name=?1", Publisher.class);
+		query.setParameter(1, authorName);
+		return query.getResultStream();
 	}
 
 	@Override

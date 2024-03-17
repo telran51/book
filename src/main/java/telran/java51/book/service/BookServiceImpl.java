@@ -93,7 +93,6 @@ public class BookServiceImpl implements BookService {
 	}
 
 	@Override
-	@Transactional(readOnly = true)
 	public Iterable<String> findPublishersByAuthor(String authorName) {
 		return publisherRepository.findDistinctByBooksAuthorsName(authorName)
 				.map(Publisher::getPublisherName)
